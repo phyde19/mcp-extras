@@ -70,6 +70,42 @@ async def call_tool(name: str, arguments: dict) -> list[ToolCallReturnValue]:
 
     raise ValueError(f"Tool not found: {name}")
 
+
+# ────────────── Prompt definition ──────────────
+PROMPT_TEXT = (
+    "Please get the current temperature in New York City and Los Angeles using "
+    "the get_weather tool. When you have both temperatures, add them together "
+    "with the calculate_sum tool and report the total."
+)
+
+@app.list_prompts()
+async def list_prompts() -> list[types.Prompt]:
+    return [
+        types.Prompt(
+            name="sum_city_temps",
+            description=(
+                "Fetch the weather for NYC and LA, then add the two "
+                "temperatures together."
+            ),
+            arguments_schema={},  # this prompt takes no arguments
+        )
+    ]
+
+@app.get_prompt()
+async def get_prompt(name: str, arguments: dict | None = None) -> types.GetPromptResult:
+    if name != "sum_city_temps":
+        raise ValueError(f"Prompt not found: {name}")
+
+    return types.GetPromptResult(
+        messages=[
+            types.PromptMessage(
+                role="user",
+                content=types.TextContent(type="text", text=PROMPT_TEXT),
+            )
+        ]
+    )
+
+
 async def main():
     async with stdio_server() as streams:
         await app.run(

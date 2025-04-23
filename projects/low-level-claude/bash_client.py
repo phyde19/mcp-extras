@@ -101,7 +101,9 @@ class MCPAnthropicChat:
 async def run_chat_loop(session: ClientSession):
     """Run an interactive chat loop"""
 
-    system_message = "You are a helpful assistant."
+    system_message = (
+        (await session.read_resource("text://system_prompt")).contents[0].text
+    )
 
     # Get Tools
     response = await session.list_tools()
@@ -147,7 +149,7 @@ async def run_chat_loop(session: ClientSession):
 
 server_params = StdioServerParameters(
     command="python",
-    args=["server.py"],
+    args=["bash_server.py"],
     env=None
 )
 

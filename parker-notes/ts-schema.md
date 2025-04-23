@@ -16,6 +16,11 @@ export type JSONRPCMessage =
 export const LATEST_PROTOCOL_VERSION = "2025-03-26";
 export const JSONRPC_VERSION = "2.0";
 
+interface Request {};
+interface Notification {};
+interface Result {};
+
+
 
 ```
 
