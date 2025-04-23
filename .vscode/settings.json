@@ -1,0 +1,16 @@
+{
+  // Use the project-local virtual environment for Python (hello-mcp)
+  "python.pythonPath": "${workspaceFolder}/projects/hello-mcp/.venv/bin/python",
+  // For newer versions of the Python extension
+  "python.defaultInterpreterPath": "${workspaceFolder}/projects/low-level-claude/.venv/bin/python",
+  // Enable static type checking and library code analysis
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  }
+}
