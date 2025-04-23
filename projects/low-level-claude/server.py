@@ -10,17 +10,23 @@ app = Server("example-server")
 async def list_resources() -> list[types.Resource]:
     return [
         types.Resource(
-            uri="example://resource", # type: ignore
+            uri="example://resource",  # type: ignore
             name="Example Resource"
         )
     ]
+
+@app.read_resource()
+async def read_resource(uri: AnyUrl) -> str:
+    if str(uri) == "example://resource":
+        return "This is a mocked example resource"
+    raise ValueError("Resource not found")
 
 @app.list_tools()
 async def list_tools() -> list[types.Tool]:
     return [
         types.Tool(
             name="calculate_sum",
-            description="Add two numbers to gether",
+            description="Add two numbers together",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -29,21 +35,39 @@ async def list_tools() -> list[types.Tool]:
                 },
                 "required": ["a", "b"]
             }
+        ),
+        types.Tool(
+            name="get_weather",
+            description="Returns the current weather for a given city",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string"}
+                },
+                "required": ["city"]
+            }
         )
     ]
 
-
-def add(a: int, b: int):
+def add(a: int, b: int) -> int:
     return a + b
+
+def mock_get_weather(city: str) -> str:
+    return f"The weather in {city} is sunny, 72°F."
 
 ToolCallReturnValue = types.TextContent | types.ImageContent | types.EmbeddedResource
 
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[ToolCallReturnValue]:
     if name == "calculate_sum":
-        # call add user defined "add" function
         result = add(arguments["a"], arguments["b"])
         return [types.TextContent(type="text", text=str(result))]
+
+    if name == "get_weather":
+        city = arguments["city"]
+        result = mock_get_weather(city)
+        return [types.TextContent(type="text", text=result)]
+
     raise ValueError(f"Tool not found: {name}")
 
 async def main():
